@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "title": "High Error Rate Detected",
+    "severity": "critical",
+    "category": "apm",
+    "message": "Error rate has exceeded 5% threshold on /api/checkout endpoint. Current rate: 7.3%",
+    "acknowledged": false,
+    "acknowledgedAt": null,
+    "createdAt": "2026-06-08T09:15:00.000Z"
+  },
+  {
+    "id": 2,
+    "title": "CPU Usage Warning",
+    "severity": "warning",
+    "category": "infrastructure",
+    "message": "Server prod-us-east-1 CPU usage at 82%. Consider scaling up.",
+    "acknowledged": false,
+    "acknowledgedAt": null,
+    "createdAt": "2026-06-08T08:50:00.000Z"
+  },
+  {
+    "id": 3,
+    "title": "Memory Usage Critical",
+    "severity": "critical",
+    "category": "infrastructure",
+    "message": "Server prod-eu-west-2 memory usage at 94%. Immediate attention required.",
+    "acknowledged": true,
+    "acknowledgedAt": "2026-06-08T09:05:00.000Z",
+    "createdAt": "2026-06-08T08:30:00.000Z"
+  },
+  {
+    "id": 4,
+    "title": "Page Load Time Degraded",
+    "severity": "warning",
+    "category": "ux",
+    "message": "Average page load time increased to 3.8s, exceeding the 3s SLA target.",
+    "acknowledged": false,
+    "acknowledgedAt": null,
+    "createdAt": "2026-06-08T08:00:00.000Z"
+  },
+  {
+    "id": 5,
+    "title": "Conversion Rate Drop",
+    "severity": "warning",
+    "category": "business",
+    "message": "Checkout conversion rate dropped from 3.2% to 2.1% in the last hour.",
+    "acknowledged": false,
+    "acknowledgedAt": null,
+    "createdAt": "2026-06-08T07:45:00.000Z"
+  },
+  {
+    "id": 6,
+    "title": "API Response Time Spike",
+    "severity": "info",
+    "category": "apm",
+    "message": "P95 response time briefly exceeded 2s on /api/users/search. Self-resolved.",
+    "acknowledged": true,
+    "acknowledgedAt": "2026-06-08T07:30:00.000Z",
+    "createdAt": "2026-06-08T07:00:00.000Z"
+  }
+]

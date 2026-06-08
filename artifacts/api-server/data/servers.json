@@ -1,0 +1,57 @@
+[
+  {
+    "id": 1,
+    "name": "prod-us-east-1",
+    "ip": "10.0.1.101",
+    "status": "degraded",
+    "cpuUsage": 82,
+    "memoryUsage": 68,
+    "diskUsage": 54,
+    "uptime": 99.92,
+    "region": "US East"
+  },
+  {
+    "id": 2,
+    "name": "prod-us-west-1",
+    "ip": "10.0.2.101",
+    "status": "online",
+    "cpuUsage": 41,
+    "memoryUsage": 55,
+    "diskUsage": 62,
+    "uptime": 99.99,
+    "region": "US West"
+  },
+  {
+    "id": 3,
+    "name": "prod-eu-west-2",
+    "ip": "10.0.3.101",
+    "status": "online",
+    "cpuUsage": 38,
+    "memoryUsage": 94,
+    "diskUsage": 71,
+    "uptime": 99.95,
+    "region": "EU West"
+  },
+  {
+    "id": 4,
+    "name": "prod-ap-southeast-1",
+    "ip": "10.0.4.101",
+    "status": "online",
+    "cpuUsage": 29,
+    "memoryUsage": 44,
+    "diskUsage": 38,
+    "uptime": 100,
+    "region": "Asia Pacific"
+  },
+  {
+    "id": 5,
+    "name": "staging-us-east-1",
+    "ip": "10.0.5.101",
+    "status": "offline",
+    "cpuUsage": 0,
+    "memoryUsage": 0,
+    "diskUsage": 45,
+    "uptime": 87.3,
+    "region": "US East"
+  }
+]

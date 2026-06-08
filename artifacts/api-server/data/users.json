@@ -1,0 +1,60 @@
+[
+  {
+    "id": 1,
+    "name": "Admin User",
+    "email": "admin@appmonitor.io",
+    "passwordHash": "admin123",
+    "role": "admin",
+    "status": "active",
+    "permissions": [
+      "view_metrics",
+      "manage_users",
+      "acknowledge_alerts",
+      "view_admin",
+      "manage_settings"
+    ],
+    "lastLogin": "2026-06-08T06:00:11.212Z",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": 2,
+    "name": "Jane Operator",
+    "email": "jane@appmonitor.io",
+    "passwordHash": "operator123",
+    "role": "operator",
+    "status": "active",
+    "permissions": [
+      "view_metrics",
+      "acknowledge_alerts"
+    ],
+    "lastLogin": "2026-06-08T07:45:00.000Z",
+    "createdAt": "2026-02-14T00:00:00.000Z"
+  },
+  {
+    "id": 3,
+    "name": "Bob Viewer",
+    "email": "bob@appmonitor.io",
+    "passwordHash": "viewer123",
+    "role": "viewer",
+    "status": "active",
+    "permissions": [
+      "view_metrics"
+    ],
+    "lastLogin": "2026-06-07T14:20:00.000Z",
+    "createdAt": "2026-03-05T00:00:00.000Z"
+  },
+  {
+    "id": 4,
+    "name": "Alice DevOps",
+    "email": "alice@appmonitor.io",
+    "passwordHash": "devops123",
+    "role": "operator",
+    "status": "inactive",
+    "permissions": [
+      "view_metrics",
+      "acknowledge_alerts"
+    ],
+    "lastLogin": "2026-05-30T09:10:00.000Z",
+    "createdAt": "2026-03-20T00:00:00.000Z"
+  }
+]
