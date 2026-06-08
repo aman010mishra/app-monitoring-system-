@@ -5,7 +5,8 @@
  * AppMonitor API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { GetUxHistoryRange } from './getUxHistoryRange';
 
-export interface HealthStatus {
-  status: string;
-}
+export type GetUxHistoryParams = {
+range?: GetUxHistoryRange;
+};

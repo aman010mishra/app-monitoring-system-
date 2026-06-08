@@ -1,22 +1,37 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: AppMonitor API specification
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: auth
+    description: Authentication
+  - name: users
+    description: User management
+  - name: metrics-apm
+    description: Application Performance Monitoring
+  - name: metrics-infra
+    description: Infrastructure health
+  - name: metrics-ux
+    description: User Experience metrics
+  - name: metrics-business
+    description: Business metrics
+  - name: alerts
+    description: Alerts
+  - name: dashboard
+    description: Dashboard summary
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +39,406 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  # Auth
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Log in
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInput"
+      responses:
+        "200":
+          description: Authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResult"
+        "401":
+          description: Invalid credentials
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Log out
+      responses:
+        "200":
+          description: Logged out
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current user
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Not authenticated
+
+  # Users (Admin)
+  /users:
+    get:
+      operationId: listUsers
+      tags: [users]
+      summary: List all users
+      responses:
+        "200":
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+    post:
+      operationId: createUser
+      tags: [users]
+      summary: Create a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserInput"
+      responses:
+        "201":
+          description: Created user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /users/{id}:
+    get:
+      operationId: getUser
+      tags: [users]
+      summary: Get a user by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: User
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateUser
+      tags: [users]
+      summary: Update a user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdate"
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+    delete:
+      operationId: deleteUser
+      tags: [users]
+      summary: Delete a user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /users/{id}/permissions:
+    patch:
+      operationId: updateUserPermissions
+      tags: [users]
+      summary: Update user permissions/role
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PermissionsUpdate"
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  # APM
+  /metrics/apm:
+    get:
+      operationId: getApmSummary
+      tags: [metrics-apm]
+      summary: Get APM summary metrics
+      responses:
+        "200":
+          description: APM summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApmSummary"
+
+  /metrics/apm/history:
+    get:
+      operationId: getApmHistory
+      tags: [metrics-apm]
+      summary: Get APM time-series history
+      parameters:
+        - name: range
+          in: query
+          schema:
+            type: string
+            enum: [1h, 6h, 24h, 7d]
+            default: 1h
+      responses:
+        "200":
+          description: APM time-series data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TimeSeriesPoint"
+
+  /metrics/apm/endpoints:
+    get:
+      operationId: getApmEndpoints
+      tags: [metrics-apm]
+      summary: Per-endpoint performance breakdown
+      responses:
+        "200":
+          description: Endpoint metrics
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EndpointMetric"
+
+  # Infrastructure
+  /metrics/infrastructure:
+    get:
+      operationId: getInfrastructureSummary
+      tags: [metrics-infra]
+      summary: Get infrastructure health summary
+      responses:
+        "200":
+          description: Infrastructure health
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InfrastructureSummary"
+
+  /metrics/infrastructure/history:
+    get:
+      operationId: getInfrastructureHistory
+      tags: [metrics-infra]
+      summary: Infrastructure time-series history
+      parameters:
+        - name: range
+          in: query
+          schema:
+            type: string
+            enum: [1h, 6h, 24h, 7d]
+            default: 1h
+      responses:
+        "200":
+          description: Infrastructure time-series
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/InfraTimeSeriesPoint"
+
+  /metrics/infrastructure/servers:
+    get:
+      operationId: listServers
+      tags: [metrics-infra]
+      summary: List monitored servers
+      responses:
+        "200":
+          description: Servers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ServerStatus"
+
+  # User Experience
+  /metrics/ux:
+    get:
+      operationId: getUxSummary
+      tags: [metrics-ux]
+      summary: Get UX metrics summary
+      responses:
+        "200":
+          description: UX summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UxSummary"
+
+  /metrics/ux/history:
+    get:
+      operationId: getUxHistory
+      tags: [metrics-ux]
+      summary: UX time-series history
+      parameters:
+        - name: range
+          in: query
+          schema:
+            type: string
+            enum: [1h, 6h, 24h, 7d]
+            default: 1h
+      responses:
+        "200":
+          description: UX time-series
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TimeSeriesPoint"
+
+  /metrics/ux/errors:
+    get:
+      operationId: getUxErrors
+      tags: [metrics-ux]
+      summary: Frontend error events
+      responses:
+        "200":
+          description: UX errors
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UxError"
+
+  # Business Metrics
+  /metrics/business:
+    get:
+      operationId: getBusinessSummary
+      tags: [metrics-business]
+      summary: Get business metrics summary
+      responses:
+        "200":
+          description: Business summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusinessSummary"
+
+  /metrics/business/history:
+    get:
+      operationId: getBusinessHistory
+      tags: [metrics-business]
+      summary: Business metrics time-series history
+      parameters:
+        - name: range
+          in: query
+          schema:
+            type: string
+            enum: [1h, 6h, 24h, 7d]
+            default: 1h
+      responses:
+        "200":
+          description: Business time-series
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BusinessTimeSeriesPoint"
+
+  # Alerts
+  /alerts:
+    get:
+      operationId: listAlerts
+      tags: [alerts]
+      summary: List all alerts
+      responses:
+        "200":
+          description: Alerts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Alert"
+
+  /alerts/{id}/acknowledge:
+    patch:
+      operationId: acknowledgeAlert
+      tags: [alerts]
+      summary: Acknowledge an alert
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Acknowledged
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Alert"
+
+  # Dashboard summary
+  /dashboard/summary:
+    get:
+      operationId: getDashboardSummary
+      tags: [dashboard]
+      summary: Overall monitoring summary across all categories
+      responses:
+        "200":
+          description: Dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+
 components:
   schemas:
     HealthStatus:
@@ -31,6 +446,330 @@ components:
       properties:
         status:
           type: string
-      required:
-        - status
+      required: [status]
 
+    LoginInput:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+
+    AuthResult:
+      type: object
+      required: [user, token]
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        token:
+          type: string
+
+    User:
+      type: object
+      required: [id, name, email, role, status, createdAt]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+          enum: [admin, operator, viewer]
+        status:
+          type: string
+          enum: [active, inactive, suspended]
+        permissions:
+          type: array
+          items:
+            type: string
+        lastLogin:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+
+    UserInput:
+      type: object
+      required: [name, email, password, role]
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+        role:
+          type: string
+          enum: [admin, operator, viewer]
+        permissions:
+          type: array
+          items:
+            type: string
+
+    UserUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        status:
+          type: string
+          enum: [active, inactive, suspended]
+        role:
+          type: string
+          enum: [admin, operator, viewer]
+
+    PermissionsUpdate:
+      type: object
+      required: [role, permissions]
+      properties:
+        role:
+          type: string
+          enum: [admin, operator, viewer]
+        permissions:
+          type: array
+          items:
+            type: string
+
+    ApmSummary:
+      type: object
+      required: [avgResponseTime, p95ResponseTime, errorRate, throughput, apdex]
+      properties:
+        avgResponseTime:
+          type: number
+          description: Average response time in ms
+        p95ResponseTime:
+          type: number
+          description: 95th percentile response time in ms
+        errorRate:
+          type: number
+          description: Error rate as percentage
+        throughput:
+          type: number
+          description: Requests per second
+        apdex:
+          type: number
+          description: Apdex score 0-1
+        status:
+          type: string
+          enum: [healthy, degraded, critical]
+
+    TimeSeriesPoint:
+      type: object
+      required: [timestamp, value]
+      properties:
+        timestamp:
+          type: string
+        value:
+          type: number
+        label:
+          type: ["string", "null"]
+
+    EndpointMetric:
+      type: object
+      required: [endpoint, method, avgResponseTime, errorRate, requestCount]
+      properties:
+        endpoint:
+          type: string
+        method:
+          type: string
+        avgResponseTime:
+          type: number
+        p95ResponseTime:
+          type: number
+        errorRate:
+          type: number
+        requestCount:
+          type: integer
+        status:
+          type: string
+          enum: [healthy, degraded, critical]
+
+    InfrastructureSummary:
+      type: object
+      required: [cpuUsage, memoryUsage, diskUsage, networkIn, networkOut, uptime]
+      properties:
+        cpuUsage:
+          type: number
+        memoryUsage:
+          type: number
+        diskUsage:
+          type: number
+        networkIn:
+          type: number
+          description: Network in Mbps
+        networkOut:
+          type: number
+          description: Network out Mbps
+        uptime:
+          type: number
+          description: Uptime percentage
+        status:
+          type: string
+          enum: [healthy, degraded, critical]
+
+    InfraTimeSeriesPoint:
+      type: object
+      required: [timestamp, cpu, memory, disk]
+      properties:
+        timestamp:
+          type: string
+        cpu:
+          type: number
+        memory:
+          type: number
+        disk:
+          type: number
+        networkIn:
+          type: number
+        networkOut:
+          type: number
+
+    ServerStatus:
+      type: object
+      required: [id, name, ip, status, cpuUsage, memoryUsage, diskUsage]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        ip:
+          type: string
+        status:
+          type: string
+          enum: [online, offline, degraded]
+        cpuUsage:
+          type: number
+        memoryUsage:
+          type: number
+        diskUsage:
+          type: number
+        uptime:
+          type: number
+        region:
+          type: ["string", "null"]
+
+    UxSummary:
+      type: object
+      required: [activeSessions, avgPageLoadTime, bounceRate, satisfactionScore, crashRate]
+      properties:
+        activeSessions:
+          type: integer
+        avgPageLoadTime:
+          type: number
+          description: Average page load time in ms
+        bounceRate:
+          type: number
+          description: Bounce rate percentage
+        satisfactionScore:
+          type: number
+          description: User satisfaction 0-100
+        crashRate:
+          type: number
+          description: Crash rate percentage
+        status:
+          type: string
+          enum: [healthy, degraded, critical]
+
+    UxError:
+      type: object
+      required: [id, message, type, count, lastSeen]
+      properties:
+        id:
+          type: integer
+        message:
+          type: string
+        type:
+          type: string
+        count:
+          type: integer
+        lastSeen:
+          type: string
+        affectedUsers:
+          type: integer
+        status:
+          type: string
+          enum: [open, resolved]
+
+    BusinessSummary:
+      type: object
+      required: [dailyActiveUsers, weeklyActiveUsers, conversionRate, revenueToday, newSignups]
+      properties:
+        dailyActiveUsers:
+          type: integer
+        weeklyActiveUsers:
+          type: integer
+        conversionRate:
+          type: number
+        revenueToday:
+          type: number
+        newSignups:
+          type: integer
+        churnRate:
+          type: number
+        status:
+          type: string
+          enum: [healthy, degraded, critical]
+
+    BusinessTimeSeriesPoint:
+      type: object
+      required: [timestamp, activeUsers, revenue, signups]
+      properties:
+        timestamp:
+          type: string
+        activeUsers:
+          type: integer
+        revenue:
+          type: number
+        signups:
+          type: integer
+        conversions:
+          type: integer
+
+    Alert:
+      type: object
+      required: [id, title, severity, category, message, createdAt, acknowledged]
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        severity:
+          type: string
+          enum: [critical, warning, info]
+        category:
+          type: string
+          enum: [apm, infrastructure, ux, business]
+        message:
+          type: string
+        createdAt:
+          type: string
+        acknowledged:
+          type: boolean
+        acknowledgedAt:
+          type: ["string", "null"]
+
+    DashboardSummary:
+      type: object
+      required: [overallStatus, apm, infrastructure, ux, business, activeAlerts]
+      properties:
+        overallStatus:
+          type: string
+          enum: [healthy, degraded, critical]
+        apm:
+          $ref: "#/components/schemas/ApmSummary"
+        infrastructure:
+          $ref: "#/components/schemas/InfrastructureSummary"
+        ux:
+          $ref: "#/components/schemas/UxSummary"
+        business:
+          $ref: "#/components/schemas/BusinessSummary"
+        activeAlerts:
+          type: integer
